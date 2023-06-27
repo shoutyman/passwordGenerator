@@ -1,6 +1,3 @@
-#standard library imports
-from enum import Enum
-
 #third-party imports
 import pyperclip
 from tkinter import *
@@ -8,12 +5,6 @@ from tkinter import ttk
 
 #local imports
 import generator
-
-#### enums for current tab
-class CurrentTab(Enum):
-    PASSPHRASE = 1
-    PASSWORD = 2
-
 
 class optionButtons(Frame):
     def __init__(self, parent):
@@ -35,21 +26,19 @@ class optionButtons(Frame):
         numberButton.grid(row = 0, column = 1)
         lowercaseButton.grid(row = 0, column = 2)
 
-class passphraseWindow(Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
+class generatorWindow(Tk):
+    def __init__(self):
+        super().__init__(className="Wan's Password Generator")
 
         #### variable definitions ####
         self.password = StringVar(self, "Click \"Generate Password\" to generate a password")
         self.dictionary = generator.readFile("dictionary.txt")
-        self.debugVar = StringVar(self)
 
         #### widget definitions ####
         passwordTextBox = ttk.Label(self, textvariable=self.password)
         self.options = optionButtons(self)
         generatePasswordButton = ttk.Button(self, text="Generate password", command= lambda: self.generate())
-        copyButton = ttk.Button(self, text="Copy password", command=lambda: self.copy())
-        debugTextBox = ttk.Label(self, textvariable=self.debugVar)
+        copyButton = ttk.Button(self, text="Copy password", command=self.copy())
 
         #### widget placement
         passwordTextBox.grid(column=0, row=0, columnspan=2)
@@ -63,41 +52,7 @@ class passphraseWindow(Frame):
     def copy(self):
         pyperclip.copy(self.password.get())
 
-##TODO:
-class passwordWindow(Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.password = StringVar(self, "Click \"Generate Password\" to generate a password")
-
-        self.testField=ttk.Label(text="WIP password tab")
-        #self.testField.grid(row=0,column=0)
-
-class passwordGeneratorApp(Tk):
-    def __init__(self):
-        super().__init__(className="Wan's Password Generator")
-        self.currentWindow = 0
-
-        #### initialize generator tabs
-        self.generatorWindow = ttk.Frame()
-        self.windowList = []
-        self.windowList.append(passphraseWindow(self.generatorWindow))
-        #self.windowList.append(passwordWindow(self))
-        self.windowList[0].grid(row=0, column=0)
-
-        self.controlFrame = ttk.Frame(self)
-        passwordButton = ttk.Radiobutton(self.controlFrame, text="Password", variable=self.currentWindow, value=CurrentTab.PASSWORD,command=self.switchWindows)
-        passphraseButton = ttk.Radiobutton(self.controlFrame, text="Passphrase", variable=self.currentWindow, value=CurrentTab.PASSPHRASE,command=self.switchWindows)
-        passwordButton.grid(row=0,column=0)
-        passphraseButton.grid(row=1,column=0)
-        self.controlFrame.grid(row=0,column=1)
-
-    def switchWindows(self):
-        print("Switching active tab")
-
-
-        
 if __name__ == "__main__":
     #TODO: auto-find dictionary options
-    root = passwordGeneratorApp()
+    root = generatorWindow()
     root.mainloop()
